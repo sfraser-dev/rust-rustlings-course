@@ -14,7 +14,6 @@
 // Execute `rustlings hint hashmaps3` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
 
 use std::collections::HashMap;
 
@@ -61,11 +60,10 @@ fn my_test_build_scores_table(results: String) -> HashMap<String, Team> {
 
 fn update_hashtable(the_scores: &mut HashMap<String, Team>, team_name: &String, goals_for: &u8, goals_against: &u8)  {
     // team 1 exists in the hashtable already
-    let team_name_clone: String = team_name.clone();
-    if the_scores.contains_key(&team_name_clone) {
+    if the_scores.contains_key(team_name) {
         // clone the name of team 1, use it as the key to get the Team struct value
         // hashtable.get() returns Option. if let pattern matching to decompose the Team struct into Some
-        if let Some(the_team_struct_option) = the_scores.get(&team_name_clone) {
+        if let Some(the_team_struct_option) = the_scores.get(team_name) {
             // create a new Team struct and populate it with the exact same values (manual clone) as the "gotten" struct
             let the_team_struct_option_new = Team {
                 goals_scored: the_team_struct_option.goals_scored + *goals_for,
@@ -73,13 +71,14 @@ fn update_hashtable(the_scores: &mut HashMap<String, Team>, team_name: &String, 
             };
             println!(
                 "{}: existing team. GF {}, GA {}",
-                team_name_clone,
+                team_name,
                 the_team_struct_option_new.goals_scored,
                 the_team_struct_option_new.goals_conceded,
             );
 
             // update the hashtable with the Team struct containing the new goals scored/conceded total
-            the_scores.insert(team_name_clone, the_team_struct_option_new);
+            // team_name.clone() used to go from borrowed (&String) to owned (String)
+            the_scores.insert(team_name.clone(), the_team_struct_option_new);
         } else {
             println!("error");
         }
@@ -88,14 +87,16 @@ fn update_hashtable(the_scores: &mut HashMap<String, Team>, team_name: &String, 
     } else {
         println!(
             "{}: new team. GF {}, GA {}",
-            team_name_clone, goals_for, goals_against,
+            team_name, goals_for, goals_against,
         );
         // update the hashtable with the Team struct containing the goals scored/conceded in their first game
         the_scores.insert(
-            team_name_clone.to_string(),
+            // team_name.clone() used to go from borrowed (&String) to owned (String). cannot use dereferencing on a &String as string is not a primitive type
+            team_name.clone(),
             Team {
-                goals_scored: *goals_for,
-                goals_conceded: *goals_against,
+                // .clone() used to go from &u8 to u8 (could have used * dereferencing here to as u8 is a primitive type)
+                goals_scored: goals_for.clone(),
+                goals_conceded: goals_against.clone(),
             },
         );
     }
