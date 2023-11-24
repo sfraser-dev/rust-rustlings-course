@@ -29,6 +29,7 @@ pub enum Command {
     Append(usize),
 }
 
+// function I used to slowly build up and test
 fn my_transformer(vec_in: &mut Vec<(String, Command)>) {
     // going to mutate the input vector (in place)
     vec_in.iter_mut().for_each(|x: &mut (String, Command)| {
@@ -75,7 +76,7 @@ fn main() {
     assert_eq!(my_vec[2].0, "foobar");
     assert_eq!(my_vec[3].0, "barbarbarbarbarbar");
 
-    // calling just to prevent unused function warnings
+    // calling official test function just to prevent unused function warnings
     transformer(&mut my_vec);
 }
 
@@ -83,9 +84,6 @@ mod my_module {
     use super::Command;
 
     // TODO: Complete the function signature!
-
-    // pub fn transformer(input: ???) -> ??? {
-
     pub fn transformer(vec_in: &mut Vec<(String, Command)>) -> Vec<String> {
         // going to mutate the input vector (in place)
         vec_in.iter_mut().for_each(|x: &mut (String, Command)| {
