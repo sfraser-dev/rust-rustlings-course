@@ -19,13 +19,21 @@
 use std::collections::HashMap;
 
 fn main() {
-    let res = "".to_string()
+    let res1 = "".to_string()
         + "England,France,4,2\n"
         + "France,Italy,3,1\n"
         + "Poland,Spain,2,0\n"
         + "Germany,England,2,1\n";
 
-    my_test_build_scores_table(res);
+    my_test_build_scores_table(res1);
+
+    // just to prevent "unused" warnings
+    let res2 = "".to_string()
+        + "England,France,4,2\n"
+        + "France,Italy,3,1\n"
+        + "Poland,Spain,2,0\n"
+        + "Germany,England,2,1\n";
+    let _temp: HashMap<String, Team> = build_scores_table(res2);
 }
 
 fn my_test_build_scores_table(results: String) -> HashMap<String, Team> {
@@ -101,7 +109,7 @@ struct Team {
 
 fn build_scores_table(results: String) -> HashMap<String, Team> {
     // The name of the team is the key and its associated struct is the value.
-    let scores: HashMap<String, Team> = HashMap::new();
+    let mut scores: HashMap<String, Team> = HashMap::new();
 
     for r in results.lines() {
         let v: Vec<&str> = r.split(',').collect();
@@ -114,7 +122,11 @@ fn build_scores_table(results: String) -> HashMap<String, Team> {
         // will be the number of goals conceded from team_2, and similarly
         // goals scored by team_2 will be the number of goals conceded by
         // team_1.
+
+        update_hashtable(&mut scores, &team_1_name, &team_1_score, &team_2_score);
+        update_hashtable(&mut scores, &team_2_name, &team_2_score, &team_1_score);
     }
+
     scores
 }
 
