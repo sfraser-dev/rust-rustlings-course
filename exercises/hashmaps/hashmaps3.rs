@@ -44,87 +44,53 @@ fn my_test_build_scores_table(results: String) -> HashMap<String, Team> {
         // goals scored by team_2 will be the number of goals conceded by
         // team_1.
 
-        // team 1 exists in the hashtable already
-        if the_scores.contains_key(&team_1_name) {
-            // clone the name of team 1, use it as the key to get the Team struct value
-            let team_1_name_clone: String = team_1_name.clone();
-            // hashtable.get() returns Option. if let pattern matching to decompose the Team struct into Some 
-            if let Some(the_team_struct_option) = the_scores.get(&team_1_name_clone) {
-                // create a new Team struct and populate it with the exact same values (manual clone) as the "gotten" struct 
-                let the_team_struct_option_new= Team {
-                    goals_scored: the_team_struct_option.goals_scored + team_1_score,
-                    goals_conceded: the_team_struct_option.goals_conceded + team_2_score,
-                };
-                println!(
-                    "{}: existing team. GF {}, GA {}",
-                    team_1_name_clone,
-                    the_team_struct_option_new.goals_scored,
-                    the_team_struct_option_new.goals_conceded,
-                );
+        update_hashtable(&mut the_scores, &team_1_name, &team_1_score, &team_2_score);
+        update_hashtable(&mut the_scores, &team_2_name, &team_2_score, &team_1_score);
 
-                // update the hashtable with the Team struct containing the new goals scored/conceded total
-                the_scores.insert(team_1_name_clone, the_team_struct_option_new);
-            } else {
-                println!("error");
-            }
-        
-        // team 1 isn't currently in the hashtable
-        } else {
-            println!(
-                "{}: new team. GF {}, GA {}",
-                team_1_name, team_1_score, team_2_score,
-            );
-            // update the hashtable with the Team struct containing the goals scored/conceded in their first game
-            the_scores.insert(
-                team_1_name,
-                Team {
-                    goals_scored: team_1_score,
-                    goals_conceded: team_2_score,
-                },
-            );
-        }
-        
-        // team 2 exists in the hashtable already
-        if the_scores.contains_key(&team_2_name) {
-            // clone the name of team 2, use it as the key to get the Team struct value
-            let team_2_name_clone: String = team_2_name.clone();
-            // hashtable.get() returns Option. if let pattern matching to decompose the Team struct into Some 
-            if let Some(the_team_struct_option) = the_scores.get(&team_2_name_clone) {
-                // create a new Team struct and populate it with the exact same values (manual clone) as the "gotten" struct 
-                let the_team_struct_option_clone = Team {
-                    goals_scored: the_team_struct_option.goals_scored + team_2_score,
-                    goals_conceded: the_team_struct_option.goals_conceded + team_1_score,
-                };
-                println!(
-                    "{}: existing team. GF {}, GA {}",
-                    team_2_name_clone,
-                    the_team_struct_option_clone.goals_scored,
-                    the_team_struct_option_clone.goals_conceded,
-                );
-                // update the hashtable with the Team struct containing the new goals scored/conceded total
-                the_scores.insert(team_2_name_clone, the_team_struct_option_clone);
-            } else {
-                println!("error");
-            }
-        
-        // team 1 isn't currently in the hashtable
-        } else {
-            println!(
-                "{}: new team. GF {}, GA {}",
-                team_2_name, team_2_score, team_1_score,
-            );
-            // update the hashtable with the Team struct containing the goals scored/conceded in their first game
-            the_scores.insert(
-                team_2_name,
-                Team {
-                    goals_scored: team_2_score,
-                    goals_conceded: team_1_score,
-                },
-            );
-        }
     }
-    // println!("{:?}",the_scores);
     the_scores
+}
+
+fn update_hashtable(the_scores: &mut HashMap<String, Team>, team_name: &String, goals_for: &u8, goals_against: &u8)  {
+    // team 1 exists in the hashtable already
+    let team_name_clone: String = team_name.clone();
+    if the_scores.contains_key(&team_name_clone) {
+        // clone the name of team 1, use it as the key to get the Team struct value
+        // hashtable.get() returns Option. if let pattern matching to decompose the Team struct into Some
+        if let Some(the_team_struct_option) = the_scores.get(&team_name_clone) {
+            // create a new Team struct and populate it with the exact same values (manual clone) as the "gotten" struct
+            let the_team_struct_option_new = Team {
+                goals_scored: the_team_struct_option.goals_scored + *goals_for,
+                goals_conceded: the_team_struct_option.goals_conceded + *goals_against,
+            };
+            println!(
+                "{}: existing team. GF {}, GA {}",
+                team_name_clone,
+                the_team_struct_option_new.goals_scored,
+                the_team_struct_option_new.goals_conceded,
+            );
+
+            // update the hashtable with the Team struct containing the new goals scored/conceded total
+            the_scores.insert(team_name_clone, the_team_struct_option_new);
+        } else {
+            println!("error");
+        }
+
+    // team 1 isn't currently in the hashtable
+    } else {
+        println!(
+            "{}: new team. GF {}, GA {}",
+            team_name_clone, goals_for, goals_against,
+        );
+        // update the hashtable with the Team struct containing the goals scored/conceded in their first game
+        the_scores.insert(
+            team_name_clone.to_string(),
+            Team {
+                goals_scored: *goals_for,
+                goals_conceded: *goals_against,
+            },
+        );
+    }
 }
 
 // A structure to store the goal details of a team.
@@ -135,7 +101,7 @@ struct Team {
 
 fn build_scores_table(results: String) -> HashMap<String, Team> {
     // The name of the team is the key and its associated struct is the value.
-    let mut scores: HashMap<String, Team> = HashMap::new();
+    let scores: HashMap<String, Team> = HashMap::new();
 
     for r in results.lines() {
         let v: Vec<&str> = r.split(',').collect();
