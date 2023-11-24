@@ -14,11 +14,49 @@
 // Execute `rustlings hint hashmaps2` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
 
 use std::collections::HashMap;
 
-#[derive(Hash, PartialEq, Eq)]
+// replication the exercise myself in main()
+fn main() {
+    // new hashmap
+    let mut bskt: HashMap<Fruit, u32> = HashMap::new();
+
+    // only calling this so no warning issued about fruit basket not being called
+    fruit_basket(&mut bskt);
+
+    // vector of different fruit kinds (enum values)
+    let fruit_kinds1 = vec![
+        Fruit::Apple,
+        Fruit::Banana,
+        Fruit::Mango,
+        Fruit::Lychee,
+        Fruit::Pineapple,
+    ];
+
+    // insert some fruit kinds into a basket / hashmap
+    bskt.insert(Fruit::Apple, 104);
+    bskt.insert(Fruit::Mango, 102);
+    bskt.insert(Fruit::Lychee, 105);
+    println!("{:?}", bskt);
+
+    // iterate through the fruit kinds enum
+    for f in fruit_kinds1 {
+        println!("{:?}", f);
+        // if not in basket...
+        if f != Fruit::Apple && f != Fruit::Mango && f != Fruit::Lychee {
+            println!("New fruit found {:?}!", f);
+            // ... add to basket
+            bskt.insert(f, 3);
+        }
+    }
+
+    // print update basket
+    println!("{:?}", bskt);
+
+}
+
+#[derive(Hash, PartialEq, Eq, Debug)]
 enum Fruit {
     Apple,
     Banana,
@@ -40,6 +78,10 @@ fn fruit_basket(basket: &mut HashMap<Fruit, u32>) {
         // TODO: Insert new fruits if they are not already present in the
         // basket. Note that you are not allowed to put any type of fruit that's
         // already present!
+        if fruit != Fruit::Apple && fruit != Fruit::Mango && fruit != Fruit::Lychee {
+            println!("New fruit found {:?}!", fruit);
+            basket.insert(fruit, 3);
+        }
     }
 }
 
@@ -81,7 +123,7 @@ mod tests {
         let count = basket.values().sum::<u32>();
         assert!(count > 11);
     }
-    
+
     #[test]
     fn all_fruit_types_in_basket() {
         let mut basket = get_fruit_basket();
