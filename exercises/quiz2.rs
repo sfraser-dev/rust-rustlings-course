@@ -31,9 +31,30 @@ pub enum Command {
 
 fn my_transformer(vec_in: &mut Vec<(String, Command)>) {
     vec_in.iter_mut().for_each(|x: &mut (String, Command)| {
-        x.0 = String::from("hi");
-        x.1 = Command::Trim;
+        let mut _s: String = (x.0).clone();
+        let _c: Command = (x.1).clone();
+        println!("{} {:?}", _s, _c);
+        match _c {
+            Command::Uppercase => x.0 = String::from((x.0).as_str().to_uppercase()),
+            Command::Trim => x.0 = String::from((x.0).as_str().trim()),
+            // grab enum variant's value
+            Command::Append(grab_value) => {
+                println!("val ======= {}",grab_value);
+                let mut app_str: String = String::from("");
+                for _ in 0..grab_value {
+                    app_str.push_str(&x.0);
+                }
+                println!(".....................{}",app_str);
+            },
+        };
     });
+    //     if _c == Command::Uppercase {
+    //         _s.make_ascii_uppercase();
+    //     } else {
+    //         println!("error: match command");
+    //         println!("{:?}",_c)
+    //     }
+    // });
     for i in 0..vec_in.len() {
         println!("{} {:?}", vec_in[i].0, vec_in[i].1);
     }
